@@ -1,0 +1,13 @@
+{
+  "id": "w17",
+  "slug": "bot-webhook-debugger",
+  "name": "机器人 Webhook 调试器",
+  "version": "0.1.0",
+  "repo": "campfire-code/bot-webhook-debugger",
+  "license": "MIT",
+  "ui": {
+    "layout": "c",
+    "palette": "green"
+  },
+  "upstream": null
+}
