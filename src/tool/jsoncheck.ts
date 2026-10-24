@@ -96,7 +96,7 @@ function scan(s: string) {
         i += 2;
         continue;
       }
-      if (c < ' ') throw new Fail(i, '字符串里有控制字符（例如 Tab），要写成转义形式 \\t');
+      if (c < ' ') throw new Fail(i, '字符串里有控制字符（例如制表符），要写成转义形式 \\t');
       i++;
     }
     throw new Fail(start, '字符串没有结束，缺少右双引号 "');

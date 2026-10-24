@@ -1,30 +1,59 @@
-/* 机器人 Webhook 调试器：只用 kit.css 的变量，类名以 wd- 开头 */
-.wd-root { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+/* 群机器人调试器：只用 kit.css 的变量，类名以 wd- 开头。收发对照：左边写、右边看往返 */
+.wd-root { flex: 1; min-height: 0; overflow: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
 .wd-root > * { flex: none; }
-.wd-card { padding: 12px 14px; display: grid; gap: 10px; }
-.wd-hd, .wd-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wd-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.wd-seg { display: inline-flex; padding: 3px; border-radius: 8px; background: var(--chip); gap: 2px; }
+.wd-tab { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 14px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-weight: 500; cursor: pointer; transition: background .15s, color .15s; }
+.wd-tab:hover { color: var(--ink); }
+.wd-tab.on { background: var(--surface); color: var(--ink); font-weight: 700; box-shadow: 0 1px 2px rgb(0 0 0 / .14); }
+.wd-dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--muted); }
+.wd-dot.wecom { background: #1FA35C; } .wd-dot.dingtalk { background: #2F7DE1; } .wd-dot.feishu { background: #14B8A6; }
+.wd-field { display: grid; gap: 3px; color: var(--muted); font-size: 12px; flex: 1 1 200px; min-width: 0; }
+.wd-url { flex: 2 1 260px; }
+.wd-note { flex: 1 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; color: var(--muted); font-size: 12.5px; }
+.wd-note svg { color: var(--primary); }
+.wd-lim { flex: 1 0 100%; }
+.wd-main { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 10px; align-items: stretch; }
+.wd-pane { min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); }
+.wd-ph { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; }
+.wd-ph b { font-size: 14px; }
+.wd-sub { color: var(--muted); font-size: 12.5px; }
+.wd-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wd-chip { height: 32px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); cursor: pointer; transition: background .15s, border-color .15s; }
+.wd-chip:hover { border-color: var(--line-strong); }
+.wd-chip.on { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
+.wd-json, .wd-pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.55; }
+.wd-json { width: 100%; min-height: 120px; resize: vertical; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--chip); color: var(--ink); box-sizing: border-box; }
+.wd-json:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.wd-check { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .wd-grow { flex: 1; }
-.wd-field { display: grid; gap: 4px; color: var(--muted); font-size: .9em; }
-.wd-tab, .wd-chip { height: 30px; padding: 0 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); cursor: pointer; }
-.wd-chip { height: 28px; padding: 0 12px; font-size: .92em; }
-.wd-tab.on, .wd-chip.on { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 600; }
-.wd-json { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; min-height: 150px; }
-.wd-bad { color: var(--err); font-size: .9em; }
-.wd-warn { color: var(--warn); font-size: .9em; }
-.wd-good { color: var(--ok); font-size: .9em; }
-.wd-confirm { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--warn); font-weight: 500; }
-.wd-badge { padding: 1px 10px; border-radius: 999px; font-size: .9em; font-weight: 600; }
-.wd-badge.ok { background: var(--ok-soft); color: var(--ok); }
-.wd-badge.err { background: var(--err-soft); color: var(--err); }
-.wd-hint { flex: 1; min-width: 200px; }
-.wd-result { display: grid; gap: 8px; }
-.wd-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
-.wd-sub { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .88em; margin-bottom: 4px; }
-.wd-pre { margin: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--chip); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .82em; white-space: pre-wrap; word-break: break-all; max-height: 200px; overflow: auto; }
-.wd-hist { max-height: 220px; }
-.wd-hist td { white-space: normal; }
-.wd-two { display: grid; grid-template-columns: 1.6fr 1fr; gap: 12px; align-items: start; }
-.wd-main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; }
-.wd-main > section { min-width: 0; }
-.wd-cols { grid-template-columns: 1fr !important; }
-@media (max-width: 860px) { .wd-two, .wd-main { grid-template-columns: 1fr; } }
+.wd-bad, .wd-good, .wd-warn { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; }
+.wd-bad { color: var(--err); } .wd-warn { color: var(--warn); } .wd-good { color: var(--ok); }
+.wd-issue { padding: 6px 10px; border-radius: 6px; border-left: 3px solid; font-size: 12.5px; }
+.wd-issue.err { background: var(--err-soft); border-color: var(--err); color: var(--err); }
+.wd-issue.warn { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+.wd-send { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: auto; padding-top: 8px; border-top: 1px dashed var(--line-strong); }
+.wd-confirm { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--warn); font-weight: 600; }
+.wd-wire { border-top: 4px solid var(--line-strong); }
+.wd-wire.ok { border-top-color: var(--ok); } .wd-wire.err { border-top-color: var(--err); }
+.wd-idle { flex: 1; display: grid; place-content: center; justify-items: center; gap: 10px; text-align: center; padding: 20px; color: var(--muted); }
+.wd-idle b { color: var(--ink); font-size: 15px; }
+.wd-idle .wd-sub { max-width: 320px; }
+.wd-flow { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.wd-node { padding: 6px 12px; border: 1px dashed var(--line-strong); border-radius: 8px; color: var(--ink); background: var(--bg); }
+.wd-verdict { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.wd-stamp { display: inline-flex; align-items: center; gap: 10px; }
+.wd-big { font-size: 38px; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.wd-ok .wd-big { color: var(--ok); }
+.wd-wire.ok .wd-stamp { color: var(--ok); } .wd-wire.err .wd-stamp { color: var(--err); }
+.wd-badge { padding: 2px 12px; border-radius: 999px; font-size: 13px; font-weight: 700; background: var(--chip); }
+.wd-wire.ok .wd-badge { background: var(--ok-soft); } .wd-wire.err .wd-badge { background: var(--err-soft); }
+.wd-ms { font-size: 20px; font-weight: 600; color: var(--muted); }
+.wd-hint { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--chip); font-size: 13.5px; line-height: 1.55; }
+.wd-sub2 { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12.5px; }
+.wd-pre { margin: 0; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--chip); white-space: pre-wrap; word-break: break-all; max-height: 96px; overflow: auto; }
+.wd-log { padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); display: grid; gap: 6px; }
+.wd-hist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; max-height: 180px; overflow: auto; }
+.wd-hist li { display: grid; grid-template-columns: 10px 110px 56px 90px 40px 60px 1fr; align-items: center; gap: 8px; min-height: 32px; padding: 0 8px; border-radius: 6px; }
+.wd-hist li:nth-child(odd) { background: var(--bg); }
+@media (max-width: 860px) { .wd-main { grid-template-columns: 1fr; } .wd-hist li { grid-template-columns: 10px 100px 56px 1fr; } }

@@ -1,13 +1,14 @@
 {
   "id": "w17",
   "slug": "bot-webhook-debugger",
-  "name": "机器人 Webhook 调试器",
-  "version": "0.1.0",
+  "name": "群机器人调试器",
+  "version": "0.2.0",
   "repo": "campfire-code/bot-webhook-debugger",
   "license": "MIT",
   "ui": {
-    "layout": "c",
-    "palette": "green"
+    "layout": "b",
+    "palette": "green",
+    "accent": "#13AE21"
   },
   "upstream": null
 }

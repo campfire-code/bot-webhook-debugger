@@ -67,14 +67,14 @@ const SAMPLE_PIC = 'https://example.com/sample.png';
 export const TEMPLATES: Template[] = [
   // ---- 企业微信 ----
   { id: 'wecom-text', platform: 'wecom', kind: 'text', label: '文本', body: { msgtype: 'text', text: { content: '【示例】今日 18:00 前请提交周报。', mentioned_list: ['@all'] } }, note: 'content 最长 2048 字节；mentioned_list 填成员 userid，@all 提醒所有人' },
-  { id: 'wecom-markdown', platform: 'wecom', kind: 'markdown', label: 'markdown', body: { msgtype: 'markdown', markdown: { content: '### 【示例】库存提醒\n> 商品：<font color="warning">示例保温杯 500ml</font>\n> 剩余库存：<font color="comment">12 件</font>\n\n[查看详情](https://example.com/)' } }, note: 'content 最长 4096 字节；字体颜色只支持 info（绿）、comment（灰）、warning（橙红）' },
+  { id: 'wecom-markdown', platform: 'wecom', kind: 'markdown', label: 'markdown', body: { msgtype: 'markdown', markdown: { content: '### 【示例】库存提醒\n> 商品：<font color="warning">示例保温杯 500 毫升</font>\n> 剩余库存：<font color="comment">12 件</font>\n\n[查看详情](https://example.com/)' } }, note: 'content 最长 4096 字节；字体颜色只支持 info（绿）、comment（灰）、warning（橙红）' },
   { id: 'wecom-markdown-v2', platform: 'wecom', kind: 'markdown', label: 'markdown_v2', body: { msgtype: 'markdown_v2', markdown_v2: { content: '# 【示例】周报提醒\n**截止时间**：周五 18:00\n\n- 本周完成\n- 下周计划' } }, note: 'content 最长 4096 字节；不支持字体颜色和 @ 群成员，客户端版本过低会显示为纯文本' },
   { id: 'wecom-image', platform: 'wecom', kind: 'image', label: '图片', body: { msgtype: 'image', image: { base64: '', md5: '' } }, note: '点「选图片」自动填 base64 和 md5；图片编码前不超过 2M，支持 JPG、PNG' },
   { id: 'wecom-news', platform: 'wecom', kind: 'card', label: '图文 news', body: { msgtype: 'news', news: { articles: [{ title: '【示例】十月活动安排', description: '点击查看活动时间和报名方式', url: SAMPLE_URL, picurl: SAMPLE_PIC }] } }, note: '一条消息 1～8 篇图文；title 超过 128 字节、description 超过 512 字节会被截断' },
   { id: 'wecom-card', platform: 'wecom', kind: 'card', label: '模板卡片 文本通知', body: { msgtype: 'template_card', template_card: { card_type: 'text_notice', main_title: { title: '【示例】审批提醒', desc: '你有 3 条待审批' }, card_action: { type: 1, url: SAMPLE_URL } } }, note: 'main_title.title 与 sub_title_text 至少填一个；card_action.type 为 1 跳转链接（填 url）、2 打开小程序（填 appid）' },
   // ---- 钉钉 ----
   { id: 'dingtalk-text', platform: 'dingtalk', kind: 'text', label: '文本', body: { msgtype: 'text', text: { content: '【示例】今日 18:00 前请提交周报。' }, at: { atMobiles: [], atUserIds: [], isAtAll: false } }, note: '要 @ 人时，content 里也要写上 @手机号 或 @userId' },
-  { id: 'dingtalk-markdown', platform: 'dingtalk', kind: 'markdown', label: 'markdown', body: { msgtype: 'markdown', markdown: { title: '库存提醒', text: '#### 【示例】库存提醒\n> 商品：示例保温杯 500ml\n> 剩余库存：**12 件**\n\n[查看详情](https://example.com/)' }, at: { isAtAll: false } }, note: 'title 是会话列表里显示的文字；markdown 只支持部分语法' },
+  { id: 'dingtalk-markdown', platform: 'dingtalk', kind: 'markdown', label: 'markdown', body: { msgtype: 'markdown', markdown: { title: '库存提醒', text: '#### 【示例】库存提醒\n> 商品：示例保温杯 500 毫升\n> 剩余库存：**12 件**' }, at: { isAtAll: false } }, note: 'title 是会话列表里显示的文字；markdown 只支持部分语法' },
   { id: 'dingtalk-image', platform: 'dingtalk', kind: 'image', label: '图片（markdown 内嵌）', body: { msgtype: 'markdown', markdown: { title: '示例图片', text: `#### 【示例】今日海报\n![海报](${SAMPLE_PIC})` } }, note: '钉钉自定义机器人没有单独的图片类型，用 markdown 的 ![](图片地址) 发图（官方建议一条不超过 20 张）' },
   { id: 'dingtalk-link', platform: 'dingtalk', kind: 'card', label: '链接 link', body: { msgtype: 'link', link: { title: '【示例】十月活动安排', text: '点击查看活动时间和报名方式', messageUrl: SAMPLE_URL, picUrl: '' } }, note: 'link 消息不支持 @ 人' },
   { id: 'dingtalk-actioncard', platform: 'dingtalk', kind: 'card', label: '整体跳转 ActionCard', body: { msgtype: 'actionCard', actionCard: { title: '审批提醒', text: '### 【示例】审批提醒\n你有 3 条待审批', btnOrientation: '0', singleTitle: '去处理', singleURL: SAMPLE_URL } } },
@@ -84,7 +84,7 @@ export const TEMPLATES: Template[] = [
   { id: 'feishu-text', platform: 'feishu', kind: 'text', label: '文本', body: { msg_type: 'text', content: { text: '【示例】今日 18:00 前请提交周报。<at user_id="all">所有人</at>' } }, note: '@ 所有人写 <at user_id="all">所有人</at>，群需要开启 @所有人' },
   { id: 'feishu-post', platform: 'feishu', kind: 'markdown', label: '富文本 post', body: { msg_type: 'post', content: { post: { zh_cn: { title: '【示例】项目更新通知', content: [[{ tag: 'text', text: '项目有更新：' }, { tag: 'a', text: '请查看', href: SAMPLE_URL }]] } } } }, note: '飞书自定义机器人没有 markdown 类型，富文本用 post；卡片里可以用 markdown 组件' },
   { id: 'feishu-image', platform: 'feishu', kind: 'image', label: '图片', body: { msg_type: 'image', content: { image_key: 'img_示例_需要先通过上传图片接口获取' } }, note: 'image_key 要先通过飞书「上传图片」接口获取，本工具不负责上传' },
-  { id: 'feishu-card', platform: 'feishu', kind: 'card', label: '卡片 interactive', body: { msg_type: 'interactive', card: { schema: '2.0', header: { title: { tag: 'plain_text', content: '【示例】库存提醒' }, template: 'blue' }, body: { elements: [{ tag: 'markdown', content: '商品：示例保温杯 500ml\n剩余库存：**12 件**' }, { tag: 'button', text: { tag: 'plain_text', content: '查看详情' }, type: 'default', behaviors: [{ type: 'open_url', default_url: SAMPLE_URL }] }] } } }, note: '卡片放在 card 字段（不是 content）；自定义机器人的卡片只支持按钮、文字链跳转链接，不支持回调' },
+  { id: 'feishu-card', platform: 'feishu', kind: 'card', label: '卡片 interactive', body: { msg_type: 'interactive', card: { schema: '2.0', header: { title: { tag: 'plain_text', content: '【示例】库存提醒' }, template: 'blue' }, body: { elements: [{ tag: 'markdown', content: '商品：示例保温杯 500 毫升\n剩余库存：**12 件**' }, { tag: 'button', text: { tag: 'plain_text', content: '查看详情' }, type: 'default', behaviors: [{ type: 'open_url', default_url: SAMPLE_URL }] }] } } }, note: '卡片放在 card 字段（不是 content）；自定义机器人的卡片只支持按钮、文字链跳转链接，不支持回调' },
 ];
 
 export const templatesOf = (p: PlatformId) => TEMPLATES.filter((t) => t.platform === p);
@@ -116,7 +116,7 @@ export function detectPlatform(url: string): PlatformId | null {
 
 export function checkWebhook(p: PlatformId, raw: string): UrlCheck {
   const s = raw.trim();
-  if (!s) return { ok: false, error: '还没有填 Webhook 地址' };
+  if (!s) return { ok: false, error: '还没有填机器人地址' };
   if (/\s/.test(s)) return { ok: false, error: '地址里有空格或换行，复制时可能多带了内容' };
   let u: URL;
   try {
@@ -400,7 +400,7 @@ const WECOM_CODES: Record<number, string> = {
   40058: '不合法的参数：常见原因是请求体不是合法 JSON、参数值或数组个数超出限制、必填参数为空',
   44004: '文本消息的 content 为空',
   45009: '调用超过频率限制，等一会儿再发',
-  93000: 'Webhook 地址不合法，或者这个机器人已经被移出群',
+  93000: '机器人地址不合法，或者这个机器人已经被移出群',
   93004: '机器人被停用',
   93008: '不在群里',
 };

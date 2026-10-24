@@ -1,6 +1,6 @@
-// 机器人 Webhook 调试器：选平台 → 填地址 → 写消息（模板 / JSON）→ 校验 → 发送 → 看原始响应与中文解释。
+// 群机器人调试器：选平台 → 填地址 → 写消息（模板 / JSON）→ 校验 → 发送 → 看原始响应与中文解释。
 import { useEffect, useMemo, useState } from 'react';
-import { ExternalLink, FileImage, Loader2, Send, Wand2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ExternalLink, FileImage, Loader2, Send, ShieldCheck, Wand2, XCircle } from 'lucide-react';
 import type { RunContext } from '../kit/types';
 import { httpFetch, openLink, pickFiles, settingsStore } from '../kit/platform';
 import { CopyButton } from '../kit/parts';
@@ -117,96 +117,111 @@ export function Main({ ctx }: { ctx: Ctx }) {
   const canSend = prep.ok && !!urlCheck?.ok && !busy;
   const rate = rateWarning(history, platform, Date.now());
 
+  const verdict = result ? (result.explain.ok ? 'ok' : 'err') : null;
+  const hint = !urlCheck ? '先填机器人地址' : !urlCheck.ok ? '地址格式不对，见上方提示' : '消息格式有错，见下方提示';
+
   return (
     <div className="wd-root">
       {notice && <div className={`k-notice ${notice.kind}`} role="status">{notice.text}</div>}
 
-      <section className="k-panel wd-card">
-        <div className="wd-hd"><b>1. 机器人</b><span className="k-help">Webhook 地址和密钥只保存在本机，界面里以密码点显示，记录里不出现</span></div>
-        <div className="wd-row">
-          {PLATFORMS.map((p) => <button key={p.id} className={`wd-tab ${p.id === platform ? 'on' : ''}`} onClick={() => changePlatform(p.id)}>{p.short}</button>)}
-          <span className="wd-grow" />
-          <button className="k-btn ghost" onClick={() => void openLink(pf.doc)}><ExternalLink size={14} />官方文档</button>
+      <header className="wd-bar">
+        <div className="wd-seg" role="tablist" aria-label="选择平台">
+          {PLATFORMS.map((p) => <button key={p.id} role="tab" aria-selected={p.id === platform} className={`wd-tab ${p.id === platform ? 'on' : ''}`} onClick={() => changePlatform(p.id)}><i className={`wd-dot ${p.id}`} />{p.short}</button>)}
         </div>
-        <div className="wd-two">
-        <label className="wd-field">Webhook 地址
-          <input className="k-input" type="password" autoComplete="off" aria-label="Webhook 地址" value={url} placeholder={pf.example} onChange={(e) => setUrl(e.target.value)} />
+        <label className="wd-field wd-url">机器人地址
+          <input className="k-input" type="password" autoComplete="off" aria-label="机器人地址" value={url} placeholder={pf.example} onChange={(e) => setUrl(e.target.value)} />
         </label>
         {pf.signLabel && (
-          <label className="wd-field">{pf.signLabel}（可选）
+          <label className="wd-field wd-sec">{pf.signLabel}（可选）
             <input className="k-input" type="password" autoComplete="off" aria-label={pf.signLabel} value={secret} placeholder="没开加签就留空" onChange={(e) => setSecret(e.target.value)} />
           </label>
         )}
+        <button className="k-btn ghost" onClick={() => void openLink(pf.doc)}><ExternalLink size={14} />官方文档</button>
+        <div className="wd-note">
+          <ShieldCheck size={14} />
+          <span>地址和密钥只保存在本机，界面里以点显示，记录里不出现</span>
+          {urlCheck && !urlCheck.ok && <b className="wd-bad">{urlCheck.error}</b>}
+          {urlCheck?.ok && <b className="wd-good">地址格式正确</b>}
+          <span className="wd-lim">限制：{pf.rate}{platform === 'dingtalk' ? '（钉钉数字未能在本次复核，以官方文档为准）' : ''}。企业微信群机器人没有签名功能。{pf.signHelp ? ` ${pf.signHelp}` : ''}</span>
         </div>
-        {urlCheck && !urlCheck.ok && <span className="wd-bad">{urlCheck.error}</span>}
-        {pf.signHelp && <span className="k-help">{pf.signHelp}</span>}
-        <span className="k-help">限制：{pf.rate}{platform === 'dingtalk' ? '（钉钉数字未能在本次复核，以官方文档为准）' : ''}。企业微信群机器人没有签名功能。</span>
-      </section>
+      </header>
 
       <div className="wd-main">
-      <section className="k-panel wd-card">
-        <div className="wd-hd"><b>2. 消息</b><span className="k-help">选一个模板改，或直接粘贴 JSON；{pf.typeKey} 是消息类型字段</span></div>
-        <div className="wd-row">
-          {tpls.map((t) => <button key={t.id} className={`wd-chip ${t.id === tpl ? 'on' : ''}`} onClick={() => pickTpl(t.id)} title={KIND_LABEL[t.kind]}>{t.label}</button>)}
-        </div>
-        {curTpl?.note && <span className="k-help">{curTpl.note}</span>}
-        <textarea className="k-input k-textarea wd-json" aria-label="消息 JSON" spellCheck={false} rows={8} value={text} onChange={(e) => { setText(e.target.value); setConfirm(false); }} />
-        <div className="wd-row">
-          <button className="k-btn" onClick={format} disabled={!prep.ok && !prep.issues.length}><Wand2 size={15} />格式化</button>
-          {platform === 'wecom' && <button className="k-btn" onClick={() => void chooseImage()}><FileImage size={15} />选图片（自动算 base64 和 md5）</button>}
-          {!prep.ok && prep.syntax && <span className="wd-bad">JSON 第 {prep.line} 行第 {prep.col} 列：{prep.syntax}</span>}
-          {prep.ok && !warns.length && <span className="wd-good">格式检查通过</span>}
-        </div>
-        {errors.map((i, k) => <div key={'e' + k} className="wd-bad">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
-        {warns.map((i, k) => <div key={'w' + k} className="wd-warn">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
-      </section>
-
-      <section className="k-panel wd-card">
-        <div className="wd-hd"><b>3. 发送</b>
-          {!confirm && <button className="k-btn primary" disabled={!canSend} onClick={() => setConfirm(true)}>{busy ? <Loader2 size={15} className="k-spin" /> : <Send size={15} />}发送到群里</button>}
-          {confirm && (
-            <span className="wd-confirm">真的会向{pf.short}群发出一条消息。
-              <button className="k-btn" onClick={() => setConfirm(false)}>取消</button>
-              <button className="k-btn primary" onClick={() => void doSend()}>确认发送</button>
-            </span>
-          )}
-          {rate && <span className="wd-warn">{rate}</span>}
-        </div>
-        {!canSend && !busy && <span className="k-help">{!urlCheck ? '先填 Webhook 地址' : !urlCheck.ok ? '地址格式不对，见上方提示' : '消息格式有错，见上方提示'}</span>}
-        {result && (
-          <div className="wd-result">
-            <div className="wd-row">
-              <span className={`wd-badge ${result.explain.ok ? 'ok' : 'err'}`}>{result.explain.ok ? '成功' : '失败'}</span>
-              {result.status !== undefined && <span className="k-num">HTTP {result.status}</span>}
-              <span className="k-num k-muted">{result.ms} ms</span>
-              <span className="wd-hint">{result.explain.hint}</span>
-            </div>
-            <div className="wd-cols">
-              <div><div className="wd-sub">请求（地址与签名已打码）<CopyButton text={`POST ${result.shownUrl}\n${result.requestBody}`} /></div>
-                <pre className="wd-pre">POST {result.shownUrl}{'\n'}{result.requestBody}</pre></div>
-              <div><div className="wd-sub">原始响应<CopyButton text={prettyResponse(result.responseText)} /></div>
-                <pre className="wd-pre">{result.networkError ? `（网络层失败）${result.networkError}` : prettyResponse(result.responseText) || '（空）'}</pre></div>
-            </div>
+        <section className="wd-pane wd-compose" aria-label="写消息">
+          <div className="wd-ph"><b>写消息</b><span className="wd-sub">选一个模板改，或直接粘贴 JSON；{pf.typeKey} 是消息类型字段</span></div>
+          <div className="wd-chips">
+            {tpls.map((t) => <button key={t.id} className={`wd-chip ${t.id === tpl ? 'on' : ''}`} onClick={() => pickTpl(t.id)} title={KIND_LABEL[t.kind]}>{t.label}</button>)}
           </div>
-        )}
-      </section>
+          {curTpl?.note && <span className="wd-sub">{curTpl.note}</span>}
+          <textarea className="wd-json" aria-label="消息 JSON" spellCheck={false} rows={6} value={text} onChange={(e) => { setText(e.target.value); setConfirm(false); }} />
+          <div className="wd-check">
+            {!prep.ok && prep.syntax ? <span className="wd-bad"><XCircle size={14} />JSON 第 {prep.line} 行第 {prep.col} 列：{prep.syntax}</span>
+              : prep.ok && !warns.length ? <span className="wd-good"><CheckCircle2 size={14} />格式检查通过</span>
+              : <span className="wd-sub">{errors.length} 处错误，{warns.length} 处提醒</span>}
+            <span className="wd-grow" />
+            <button className="k-btn" onClick={format} disabled={!prep.ok && !prep.issues.length}><Wand2 size={15} />格式化</button>
+            {platform === 'wecom' && <button className="k-btn" onClick={() => void chooseImage()}><FileImage size={15} />选图片（自动算 base64 和 md5）</button>}
+          </div>
+          {errors.map((i, k) => <div key={'e' + k} className="wd-issue err">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
+          {warns.map((i, k) => <div key={'w' + k} className="wd-issue warn">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
+          <div className="wd-send">
+            {!confirm && <button className="k-btn primary big" disabled={!canSend} onClick={() => setConfirm(true)}>{busy ? <Loader2 size={15} className="k-spin" /> : <Send size={15} />}发送到群里</button>}
+            {confirm && (
+              <span className="wd-confirm">真的会向{pf.short}群发出一条消息。
+                <button className="k-btn" onClick={() => setConfirm(false)}>取消</button>
+                <button className="k-btn primary" onClick={() => void doSend()}>确认发送</button>
+              </span>
+            )}
+            {!canSend && !busy && <span className="wd-sub">{hint}</span>}
+            {rate && <span className="wd-warn">{rate}</span>}
+          </div>
+        </section>
 
+        <section className={`wd-pane wd-wire ${verdict ?? ''}`} aria-label="往返结果">
+          {!result ? (
+            <div className="wd-idle">
+              <div className="wd-flow" aria-hidden="true">
+                <span className="wd-node">本机</span><ArrowRight size={16} /><span className="wd-node">{pf.short}机器人</span><ArrowRight size={16} /><span className="wd-node">群里</span>
+              </div>
+              <b>发出后在这里看往返</b>
+              <span className="wd-sub">实际请求（地址和签名已打码）、状态码、耗时、平台原始响应，以及用中文解释的返回码含义</span>
+            </div>
+          ) : (
+            <>
+              <div className="wd-verdict">
+                <div className="wd-stamp">
+                  {result.explain.ok ? <CheckCircle2 size={22} /> : <XCircle size={22} />}
+                  <span className="wd-big k-num">{result.status ?? '无响应'}</span>
+                  <span className="wd-badge">{result.explain.ok ? '成功' : '失败'}</span>
+                </div>
+                <span className="k-num wd-ms">{result.ms} ms</span>
+              </div>
+              <p className="wd-hint">{result.explain.hint}</p>
+              <div className="wd-sub2">发出的请求（地址与签名已打码）<CopyButton text={`POST ${result.shownUrl}\n${result.requestBody}`} /></div>
+              <pre className="wd-pre">POST {result.shownUrl}{'\n'}{result.requestBody}</pre>
+              <div className="wd-sub2">平台返回的原始响应<CopyButton text={prettyResponse(result.responseText)} /></div>
+              <pre className="wd-pre">{result.networkError ? `（网络层失败）${result.networkError}` : prettyResponse(result.responseText) || '（空）'}</pre>
+            </>
+          )}
+        </section>
       </div>
 
       {history.length > 0 && (
-        <section className="k-panel wd-card">
-          <div className="wd-hd"><b>发送记录</b><span className="k-help">只记时间、平台、类型和结果，不记地址、密钥和消息内容</span></div>
-          <div className="k-scroll wd-hist">
-            <table className="k-table">
-              <thead><tr><th>时间</th><th>平台</th><th>类型</th><th>HTTP</th><th>耗时</th><th>结果</th></tr></thead>
-              <tbody>
-                {history.map((h, i) => (
-                  <tr key={i}><td className="k-num">{fmt(h.at)}</td><td>{platformOf(h.platform).short}</td><td>{h.type}</td><td className="k-num">{h.status ?? '—'}</td><td className="k-num">{h.ms} ms</td>
-                    <td><span className={h.ok ? 'wd-good' : 'wd-bad'}>{h.summary}</span></td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <section className="wd-log" aria-label="发送记录">
+          <div className="wd-ph"><b>发送记录</b><span className="wd-sub">只记时间、平台、类型和结果，不记地址、密钥和消息内容</span></div>
+          <ol className="wd-hist">
+            {history.map((h, i) => (
+              <li key={i} className={h.ok ? 'ok' : 'err'}>
+                <i className={`wd-dot ${h.platform}`} />
+                <span className="k-num">{fmt(h.at)}</span>
+                <b>{platformOf(h.platform).short}</b>
+                <span>{h.type}</span>
+                <span className="k-num">{h.status ?? '—'}</span>
+                <span className="k-num wd-sub">{h.ms} ms</span>
+                <span className={h.ok ? 'wd-good' : 'wd-bad'}>{h.summary}</span>
+              </li>
+            ))}
+          </ol>
         </section>
       )}
     </div>

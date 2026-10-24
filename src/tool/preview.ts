@@ -9,7 +9,7 @@ export const params = {};
 
 const body = {
   msgtype: 'markdown',
-  markdown: { title: '库存提醒', text: '#### 【示例】库存提醒\n> 商品：示例保温杯 500ml\n> 剩余库存：**12 件**\n\n[查看详情](https://example.com/)' },
+  markdown: { title: '库存提醒', text: '#### 【示例】库存提醒\n> 商品：示例保温杯 500 毫升\n> 剩余库存：**12 件**' },
   at: { isAtAll: false },
 };
 const shownUrl = maskUrl(`${DEMO_WEBHOOK}&timestamp=1792749000000&sign=${encodeURIComponent('c2lnbi1leGFtcGxlLTAwMDAwMDAwMDAwMA==')}`);
