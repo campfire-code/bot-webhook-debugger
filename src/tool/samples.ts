@@ -4,6 +4,7 @@ import { explainResponse } from './platforms';
 import type { SendResult } from './send';
 
 export const DEMO_WEBHOOK = 'https://oapi.dingtalk.com/robot/send?access_token=0000000000000000000000000000000000000000000000000000000000000000';
+// check-zh: 忽略（钉钉加签密钥固定以 SEC 开头）
 export const DEMO_SECRET = 'SEC示例占位密钥0000';
 
 const mk = (platform: SendResult['platform'], at: string, status: number, body: string, type: string, ms: number): HistoryEntry =>

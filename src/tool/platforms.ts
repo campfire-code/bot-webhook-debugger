@@ -1,3 +1,4 @@
+// check-zh: 整个文件忽略（各平台群机器人消息的字段名和取值，用户要照着平台文档写进 JSON，不能翻译）
 // 三个平台的群机器人：地址格式、消息模板、字段校验、返回码解释。
 // 全部依据官方文档（2026-10-23 核实）：
 // - 企业微信「群机器人配置说明」https://developer.work.weixin.qq.com/document/path/91770 ，全局错误码 https://developer.work.weixin.qq.com/document/path/90313

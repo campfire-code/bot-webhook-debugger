@@ -160,7 +160,7 @@ export function Main({ ctx }: { ctx: Ctx }) {
               : <span className="wd-sub">{errors.length} 处错误，{warns.length} 处提醒</span>}
             <span className="wd-grow" />
             <button className="k-btn" onClick={format} disabled={!prep.ok && !prep.issues.length}><Wand2 size={15} />格式化</button>
-            {platform === 'wecom' && <button className="k-btn" onClick={() => void chooseImage()}><FileImage size={15} />选图片（自动算 base64 和 md5）</button>}
+            {platform === 'wecom' && <button className="k-btn" onClick={() => void chooseImage()}><FileImage size={15} />选图片（自动算出图片编码和校验值）</button>}
           </div>
           {errors.map((i, k) => <div key={'e' + k} className="wd-issue err">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
           {warns.map((i, k) => <div key={'w' + k} className="wd-issue warn">{i.path ? `${i.path}：` : ''}{i.message}</div>)}
@@ -198,6 +198,7 @@ export function Main({ ctx }: { ctx: Ctx }) {
               </div>
               <p className="wd-hint">{result.explain.hint}</p>
               <div className="wd-sub2">发出的请求（地址与签名已打码）<CopyButton text={`POST ${result.shownUrl}\n${result.requestBody}`} /></div>
+              {/* check-zh: 忽略（原样显示发出的请求） */}
               <pre className="wd-pre">POST {result.shownUrl}{'\n'}{result.requestBody}</pre>
               <div className="wd-sub2">平台返回的原始响应<CopyButton text={prettyResponse(result.responseText)} /></div>
               <pre className="wd-pre">{result.networkError ? `（网络层失败）${result.networkError}` : prettyResponse(result.responseText) || '（空）'}</pre>
